@@ -29,9 +29,9 @@ def insertionSort(array):
 def selectionSort(array):
     #works by having a sorted half and unsorted half of the array
     #takes the smallest number from the unsorted half and shoves it into the sorted half
-    for i in range(len(array)-1):
+    for i in range(len(array)):
         index = i
-        for j in range(i+1, len(array)-1):
+        for j in range(i+1, len(array)):
             if array[j] < array[index]:
                 index = j
 
