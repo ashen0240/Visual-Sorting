@@ -58,14 +58,113 @@ def bubbleSort(array):
 
 
 def mergeSort(array):
+    #I UNDERSTAND THE THEORY WELL, NEED TO LOOK OVER IMPLEMENTATION MORE
+    #beaks the array down into pairs, sorting each pairs
+    #combines pairs and sorts
+    #repeat the combination unitl you have the whole array
+    #always O(nlog(n)) complexity
+
+    mergeSortHelper(array, 0, len(array)-1)
+
+def mergeSortHelper(arr,l,r):
+    if l < r:
+  
+        # Same as (l+r)//2, but avoids overflow for
+        # large l and h
+        m = (l+(r-1))//2
+  
+        # Sort first and second halves
+        mergeSortHelper(arr, l, m)
+        mergeSortHelper(arr, m+1, r)
+        merge(arr, l, m, r)
     return
 
+def merge(arr, l, m, r):
+    n1 = m - l + 1
+    n2 = r- m
+  
+    # create temp arrays
+    L = [0] * (n1)
+    R = [0] * (n2)
+  
+    # Copy data to temp arrays L[] and R[]
+    for i in range(0 , n1):
+        L[i] = arr[l + i]
+  
+    for j in range(0 , n2):
+        R[j] = arr[m + 1 + j]
+  
+    # Merge the temp arrays back into arr[l..r]
+    i = 0     # Initial index of first subarray
+    j = 0     # Initial index of second subarray
+    k = l     # Initial index of merged subarray
+  
+    while i < n1 and j < n2 :
+        if L[i] <= R[j]:
+            arr[k] = L[i]
+            i += 1
+        else:
+            arr[k] = R[j]
+            j += 1
+        k += 1
+  
+    # Copy the remaining elements of L[], if there
+    # are any
+    while i < n1:
+        arr[k] = L[i]
+        i += 1
+        k += 1
+  
+    # Copy the remaining elements of R[], if there
+    # are any
+    while j < n2:
+        arr[k] = R[j]
+        j += 1
+        k += 1
 
 
 def heapSort(array):
-    return
+    #NEED TO UNDERSTAND MORE
+    #turns the array into a heap
+    #sorts the heap into a max heap (every child is less than its parent)
+    #removes the first node (largest num), and put the smallest node in its place
+    #sort back into max heap and replace
+    #always O(nlog(n)) complexity
+    n = len(array)
+ 
+    #Builds the maxHeap
+    for i in range(n//2 - 1, -1, -1):
+        heapify(array, n, i)
+ 
+    #One by one extracts the parent node
+    for i in range(n-1, 0, -1):
+        array[i], array[0] = array[0], array[i]  # swap
+        heapify(array, i, 0)
 
+def heapify(array, n, i):
+    #recursivly creates the maxHeap
+    largest = i  # Initialize largest as root
+    l = 2 * i + 1     # left = 2*i + 1
+    r = 2 * i + 2     # right = 2*i + 2
+ 
+    # See if left child of root exists and is
+    # greater than root
+    if l < n and array[largest] < array[l]:
+        largest = l
+ 
+    # See if right child of root exists and is
+    # greater than root
+    if r < n and array[largest] < array[r]:
+        largest = r
+ 
+    # Change root, if needed
+    if largest != i:
+        array[i], array[largest] = array[largest], array[i]  # swap
+ 
+        # Heapify the root.
+        heapify(array, n, largest)
 
+ 
 
 def quickSort(array):
     #for ease of calling
@@ -91,25 +190,13 @@ def partition(array, start, end):
     high = end
 
     while True:
-        # If the current value we're looking at is larger than the pivot
-        # it's in the right place (right side of pivot) and we can move left,
-        # to the next element.
-        # We also need to make sure we haven't surpassed the low pointer, since that
-        # indicates we have already moved all the elements to their correct side of the pivot
         while low <= high and array[high] >= pivot:
             high = high - 1
-
-        # Opposite process of the one above
         while low <= high and array[low] <= pivot:
             low = low + 1
-
-        # We either found a value for both high and low that is out of order
-        # or low is higher than high, in which case we exit the loop
         if low <= high:
             array[low], array[high] = array[high], array[low]
-            # The loop continues
         else:
-            # We exit out of the loop
             break
 
     array[start], array[high] = array[high], array[start]
@@ -119,7 +206,7 @@ def partition(array, start, end):
 
 
 
-quickSort(array)
+mergeSort(array)
 
 for i in range (0, len(array)):
     print(array[i])
