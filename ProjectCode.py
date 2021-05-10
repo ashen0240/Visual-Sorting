@@ -2,8 +2,8 @@ import random
 
 #Create the array
 numnums = 100
-
-sortingMethod = "Insertion Sort"
+speed = 1 #big nums slower
+sortingMethod = "Bubble Sort"
 
 array = [n for n in range (1,numnums+1)]
 #print (array)
@@ -18,16 +18,18 @@ def insertionSort(array):
     #It picks up the first number in the unsorted half and works 
     #backwards from the sorted half to see where to slot it in, 
     #shifting the array up as it goes
-    #average and worst complexity of O(n) but a best case of O(n)
+    #average and worst complexity of O(n^2) but a best case of O(n)
+    #error that copies two to the same
 
     for index in range(1, len(array)):
         currentValue = array[index]
         currentPosition = index
-
         while currentPosition > 0 and array[currentPosition - 1] > currentValue:
             array[currentPosition] = array[currentPosition -1]
             currentPosition = currentPosition - 1
+            yield array
         array[currentPosition] = currentValue
+        
 
 
 
@@ -41,21 +43,25 @@ def selectionSort(array):
         for j in range(i+1, len(array)):
             if array[j] < array[index]:
                 index = j
+                
+            yield array
 
         array[i], array[index] = array[index], array[i]
+        yield array
 
 
 
 def bubbleSort(array):
     #works by picking up the largest number and swaping it to the back, 
     #comparing one by one which is greater
-    #average and worst complexity of O(n) but a best case of O(n)
+    #average and worst complexity of O(n^2) but a best case of O(n)
 
     n = len(array)
     for i in range(n):
         for j in range(0, n-i-1):
             if array[j] > array[j+1] :
                 array[j], array[j+1] = array[j+1], array[j]
+            yield array
 
 
 
@@ -76,9 +82,10 @@ def mergeSortHelper(arr,l,r):
         m = (l+(r-1))//2
   
         # Sort first and second halves
-        mergeSortHelper(arr, l, m)
-        mergeSortHelper(arr, m+1, r)
-        merge(arr, l, m, r)
+        yield from mergeSortHelper(arr, l, m)
+        yield from mergeSortHelper(arr, m+1, r)
+        yield from merge(arr, l, m, r)
+        yield array
     return
 
 def merge(arr, l, m, r):
@@ -123,6 +130,7 @@ def merge(arr, l, m, r):
         arr[k] = R[j]
         j += 1
         k += 1
+    yield array
 
 
 def heapSort(array):
@@ -136,12 +144,12 @@ def heapSort(array):
  
     #Builds the maxHeap
     for i in range(n//2 - 1, -1, -1):
-        heapify(array, n, i)
+        yield from heapify(array, n, i)
  
     #One by one extracts the parent node
     for i in range(n-1, 0, -1):
         array[i], array[0] = array[0], array[i]  # swap
-        heapify(array, i, 0)
+        yield from heapify(array, i, 0)
 
 def heapify(array, n, i):
     #recursivly creates the maxHeap
@@ -162,6 +170,7 @@ def heapify(array, n, i):
     # Change root, if needed
     if largest != i:
         array[i], array[largest] = array[largest], array[i]  # swap
+        yield  array
  
         # Heapify the root.
         heapify(array, n, largest)
@@ -169,6 +178,7 @@ def heapify(array, n, i):
  
 
 def quickSort(array):
+    #YIELD NOT WORKING
     #for ease of calling
     #worst case o(n^2) but average and best of O(nlog(n))
     quickSortHelper(array, 0, len(array)-1)
@@ -179,8 +189,9 @@ def quickSortHelper(array, start, end):
         return
 
     p = partition(array, start, end)
-    quickSortHelper(array, start, p-1)
-    quickSortHelper(array, p+1, end)
+    yield from quickSortHelper(array, start, p-1)
+    yield from quickSortHelper(array, p+1, end)
+    yield array
     
 def partition(array, start, end):
     #another quickSort Helper function
@@ -198,6 +209,7 @@ def partition(array, start, end):
             low = low + 1
         if low <= high:
             array[low], array[high] = array[high], array[low]
+            yield array
         else:
             break
 
@@ -206,13 +218,13 @@ def partition(array, start, end):
     return high
 
 
-
+"""
 
 mergeSort(array)
 
 for i in range (0, len(array)):
     print(array[i])
-
+"""
 
 import time
 import matplotlib.pyplot as plt
@@ -277,6 +289,6 @@ if __name__ == "__main__":
         text.set_text("# of operations: {}".format(iteration[0]))
 
     anim = animation.FuncAnimation(fig, func=update_fig,
-        fargs=(bar_rects, iteration), frames=generator, interval=1,
+        fargs=(bar_rects, iteration), frames=generator, interval=speed,
         repeat=False)
     plt.show()
